@@ -1,11 +1,11 @@
 import './App.css'
-
+import { symbolArray } from './utils/symbolArray'
 function App() {
 
   return (
     <>
       <div>
-        Nothing here.
+        {symbolArray}
       </div>
     </>
   )
