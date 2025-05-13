@@ -8,7 +8,7 @@ export let symbolArray = generateSymbolArray();
 
 function generateSymbolArray() {
     const chunkLength = Math.floor(symbolArrayLength / numWords);
-    const wordStartIndices = new Array(numWords).fill(null).map((_, i) => i * chunkLength + getRandomInt(0, chunkLength - wordLength - 1));
+    const wordStartIndices = Array.from({ length: numWords }, (_, i) => i * chunkLength + getRandomInt(0, chunkLength - wordLength - 1))
     const selectedWords = shuffle(words).slice(0, 10);
     
     let symbolArray = new Array(symbolArrayLength).fill(null);
