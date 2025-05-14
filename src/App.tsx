@@ -1,9 +1,13 @@
 import { useState } from 'react'
-import './App.css'
+
 import Column from './components/Column/Column'
 import ColumnWrapper from './components/ColumnWrapper/ColumnWrapper'
 import Symbol from './components/Symbol/Symbol'
-import { symbolArray } from './utils/symbolArray'
+import { highlightedSymbolClassName } from './components/Symbol/SymbolTypes'
+
+import { symbolArray, wordStartIndices, wordLength } from './utils/symbolArray'
+
+import './App.css'
 
 function App() {
   const numCols = 2
@@ -13,24 +17,35 @@ function App() {
   const symbols = symbolArray.map((sym, i) => <Symbol  
     symbol={sym}
     handleMouseEnter={()=>handleMouseEnterSymbol(i)}
-    handleMouseLeave={()=>handleMouseLeaveSymbol(i)}
+    handleMouseLeave={()=>handleMouseLeaveSymbol()}
     className={highlightedSymbols[i]}
   />)
 
+ 
   function handleMouseEnterSymbol(idx: number){
-    console.log(highlightedSymbols)
+    let selectedWordIdx = isHoveringOverWord(idx)
+    let nextHighlightedSymbols = symbolArray.map((_, i) => "")
 
-    console.log(`ENTERED ${idx}`)
-    const newHighlightedSymbols = symbolArray.map((_, i) => "")
-    newHighlightedSymbols[idx] = "highlighted-symbol"
-    setHighlightedSymbols(newHighlightedSymbols)
+    if(selectedWordIdx){
+      for(let i = selectedWordIdx; i<selectedWordIdx+wordLength; i++){
+        nextHighlightedSymbols[i] = highlightedSymbolClassName
+      }
+    }
+    else{
+      nextHighlightedSymbols[idx] = highlightedSymbolClassName
+    }
+
+    setHighlightedSymbols(nextHighlightedSymbols)
   }
 
-  function handleMouseLeaveSymbol(idx: number){
-    console.log(`LEFT ${idx}`)
-    const newHighlightedSymbols = symbolArray.map((_, i) => "")
-    setHighlightedSymbols(newHighlightedSymbols)
+  function handleMouseLeaveSymbol(){
+    const nextHighlightedSymbols = symbolArray.map((_, i) => "")
+    setHighlightedSymbols(nextHighlightedSymbols)
     console.log(highlightedSymbols)
+  }
+
+  function isHoveringOverWord(i:number){
+    return wordStartIndices.find((element) => i >= element && i < element+wordLength)
   }
 
   const Columns = Array.from(

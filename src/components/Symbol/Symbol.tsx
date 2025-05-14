@@ -1,6 +1,7 @@
 import './Symbol.css'
+import type { SymbolProps } from './SymbolTypes'
 
-export default function Symbol( { symbol, handleMouseEnter, handleMouseLeave, className } : { symbol: string, handleMouseEnter: CallableFunction, handleMouseLeave: CallableFunction, className: string}){
+export default function Symbol( { symbol, handleMouseEnter, handleMouseLeave, className } : SymbolProps){
     return <span 
                 onMouseEnter={()=>handleMouseEnter()} 
                 onMouseLeave={()=>handleMouseLeave()}
