@@ -1,0 +1,9 @@
+.column-wrapper{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1ch;
+    
+    margin:0px;
+    padding: 0px;
+    max-width: max-content;
+}
