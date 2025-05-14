@@ -1,3 +1,6 @@
+import { getRandomInt } from "./getRandomInt";
+import { shuffle } from "./shuffle";
+
 const words= ["dangers", "sending", "central", "hunters", "resides", "believe", "venture", "pattern", "discard", "mention", "cutters", "canteen", "beliefs", "banning", "minigun", "cistern"];
 const miscSymbols = [',','.','!','@','#','$','%','&','(',')','{','}','[',']','<','>','?','"',"'", '/', '|'];
 const symbolArrayLength = 384
@@ -28,12 +31,3 @@ for (let i = 0; i < symbolArrayLength; i++) {
     symbolArray[i] = miscSymbols[getRandomInt(0, miscSymbols.length - 1)];
 }
 
-function getRandomInt(min:number, max:number) {
-    const minCeiled = Math.ceil(min);
-    const maxFloored = Math.floor(max);
-    return Math.floor(Math.random() * (maxFloored - minCeiled) + minCeiled); // The maximum is exclusive and the minimum is inclusive
-}
-
-function shuffle(array: string[]){
-    return array.map((word) => ({ sort: Math.random(), value: word})).sort((a, b) => a.sort - b.sort).map((a) => a.value)
-}
