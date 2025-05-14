@@ -10,9 +10,6 @@ import { symbolArray, wordStartIndices, wordLength } from './utils/symbolArray'
 import './App.css'
 
 function App() {
-  const numCols = 2
-  const symbolsPerColumn = symbolArray.length/numCols
-  
   const [ highlightedSymbols, setHighlightedSymbols ] = useState<string[]>(symbolArray.map((_, i) => ""))
   const symbols = symbolArray.map((sym, i) => <Symbol  
     symbol={sym}
@@ -41,26 +38,16 @@ function App() {
   function handleMouseLeaveSymbol(){
     const nextHighlightedSymbols = symbolArray.map((_, i) => "")
     setHighlightedSymbols(nextHighlightedSymbols)
-    console.log(highlightedSymbols)
   }
 
   function isHoveringOverWord(i:number){
     return wordStartIndices.find((element) => i >= element && i < element+wordLength)
   }
 
-  const Columns = Array.from(
-    { length: numCols }, (_, i) => 
-      <Column 
-        colSymbols={symbols.slice(i*symbolsPerColumn, i*symbolsPerColumn + symbolsPerColumn)}
-      />
-  )
-
-  return (
+return (
     <>
       <div>
-        <ColumnWrapper>
-          {Columns}
-        </ColumnWrapper>
+        <ColumnWrapper symbols={symbols}/>
       </div>
     </>
   )
