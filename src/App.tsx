@@ -10,12 +10,27 @@ function App() {
   const symbolsPerColumn = symbolArray.length/numCols
   
   const [ highlightedSymbols, setHighlightedSymbols ] = useState<string[]>(symbolArray.map((_, i) => ""))
-  const symbols = symbolArray.map((sym, i) => <Symbol  symbol={sym} handleMouseEnter={()=>handleMouseEnterSymbol(i)} className={highlightedSymbols[i]}/>)
+  const symbols = symbolArray.map((sym, i) => <Symbol  
+    symbol={sym}
+    handleMouseEnter={()=>handleMouseEnterSymbol(i)}
+    handleMouseLeave={()=>handleMouseLeaveSymbol(i)}
+    className={highlightedSymbols[i]}
+  />)
 
   function handleMouseEnterSymbol(idx: number){
-    const newHighlightedSymbols = [...highlightedSymbols]
+    console.log(highlightedSymbols)
+
+    console.log(`ENTERED ${idx}`)
+    const newHighlightedSymbols = symbolArray.map((_, i) => "")
     newHighlightedSymbols[idx] = "highlighted-symbol"
     setHighlightedSymbols(newHighlightedSymbols)
+  }
+
+  function handleMouseLeaveSymbol(idx: number){
+    console.log(`LEFT ${idx}`)
+    const newHighlightedSymbols = symbolArray.map((_, i) => "")
+    setHighlightedSymbols(newHighlightedSymbols)
+    console.log(highlightedSymbols)
   }
 
   const Columns = Array.from(
