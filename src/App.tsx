@@ -4,18 +4,20 @@ import ColumnWrapper from './components/ColumnWrapper/ColumnWrapper'
 import Symbol from './components/Symbol/Symbol'
 import { highlightedSymbolClassName } from './components/Symbol/SymbolTypes'
 
-import { rawSymbols, wordStartIndices, wordLength, password, selectedWords, symbolsPerLine } from './utils/setUpGame'
+import { rawSymbols, wordStartIndices, wordLength, password, selectedWords, symbolsPerLine, totalTries, rewardTriesResetP } from './utils/setUpGame'
 import compareToPassword from './utils/compareToPassword'
 
 import './App.css'
 import BracketPair from './utils/BracketPair'
+import { getRandomInt } from './utils/getRandomInt'
 
 function App() {
   const [ highlightedSymbols, setHighlightedSymbols ] = useState<string[]>(Array.from(rawSymbols, (_)=> ""))
-  const [ tries, setTries ] = useState<number>(4)
-  const [bracketBlacklist, setBracketBlacklist] = useState<number[]>([0])
+  const [ tries, setTries ] = useState<number>(totalTries)
+  const [ bracketBlacklist, setBracketBlacklist] = useState<number[]>([0])
+  const [ symbolArray, setSymbolArray ] = useState<string[]>(rawSymbols)
 
-  const symbols = rawSymbols.map((sym, i) => <Symbol  
+  const symbols = symbolArray.map((sym, i) => <Symbol  
     symbol={sym}
     handleMouseEnter={()=>handleMouseEnterSymbol(i)}
     handleMouseLeave={()=>handleMouseLeaveSymbol()}
@@ -31,6 +33,7 @@ function App() {
         checkGuess(word)
       }
       else if(bracketPair.valid){
+        giveReward()
         setBracketBlacklist([...bracketBlacklist, bracketPair.start, bracketPair.end])
       }
     }
@@ -48,8 +51,47 @@ function App() {
     }
   }
 
+  function giveReward(){
+    if(Math.random() < rewardTriesResetP){
+      resetTries()
+    }
+    else{
+      removeDud()
+    }
+  }
+
+  function resetTries(){
+    console.log("Reset Tries!")
+    setTries(totalTries)
+  }
+
+  function removeDud(){
+    const duds = Array.from(selectedWords, (elem, i) => {
+      if(elem != password)
+        return i;
+    }).filter(i => i !=undefined)
+
+    if(!duds.length)
+      return
+
+    console.log("Remove dud!")
+    const wordToRemoveIdx = duds[getRandomInt(0, duds.length)]
+
+    const nextSymbolArray = [...symbolArray]
+    const wordStart  = wordStartIndices[wordToRemoveIdx]
+
+    for(let i = wordStart; i < wordStart + wordLength; i++){
+      nextSymbolArray[i] = '.'
+    }
+
+    selectedWords.splice(wordToRemoveIdx, 1)
+    wordStartIndices.splice(wordToRemoveIdx, 1)
+
+    setSymbolArray(nextSymbolArray)
+  }
+
   function handleMouseEnterSymbol(idx: number){
-    let nextHighlightedSymbols = Array.from(rawSymbols, (_)=> "")
+    let nextHighlightedSymbols = Array.from(symbolArray, (_)=> "")
     
     let word = isWord(idx)
     let bracketPair = isBracketPair(idx);
@@ -84,7 +126,7 @@ function App() {
   }
 
   function handleMouseLeaveSymbol(){
-    const nextHighlightedSymbols = Array.from(rawSymbols, (_)=> "")
+    const nextHighlightedSymbols = Array.from(symbolArray, (_)=> "")
     setHighlightedSymbols(nextHighlightedSymbols)
   }
 
@@ -100,7 +142,7 @@ function App() {
     const lineStartIdx =   Math.floor(i / symbolsPerLine)*symbolsPerLine
     const lineEndIdx = lineStartIdx +  symbolsPerLine
 
-    const selectedChar = rawSymbols[i]
+    const selectedChar = symbolArray[i]
     
     let bracketStart = -1
     let bracketEnd = -1
@@ -125,7 +167,7 @@ function App() {
         if (isWord(j)>-1){
           break
         }
-        if (rawSymbols[j] == correspondingCloseBracket  && !bracketBlacklist.some((elem)=> elem === j)) {
+        if (symbolArray[j] == correspondingCloseBracket  && !bracketBlacklist.some((elem)=> elem === j)) {
           bracketEnd = j
         }
       }
@@ -136,7 +178,7 @@ function App() {
       for (let j = i; j > lineStartIdx; j--) {
         if (isWord(j) > -1)
           break
-        if (rawSymbols[j] == correspondingOpenBracket  && !bracketBlacklist.some((elem)=> elem === j)) {
+        if (symbolArray[j] == correspondingOpenBracket  && !bracketBlacklist.some((elem)=> elem === j)) {
           bracketStart = j
         }
       }
