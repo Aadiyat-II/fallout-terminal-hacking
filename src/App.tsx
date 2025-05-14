@@ -1,6 +1,5 @@
 import { useState } from 'react'
 
-import Column from './components/Column/Column'
 import ColumnWrapper from './components/ColumnWrapper/ColumnWrapper'
 import Symbol from './components/Symbol/Symbol'
 import { highlightedSymbolClassName } from './components/Symbol/SymbolTypes'
@@ -10,7 +9,7 @@ import { symbolArray, wordStartIndices, wordLength } from './utils/symbolArray'
 import './App.css'
 
 function App() {
-  const [ highlightedSymbols, setHighlightedSymbols ] = useState<string[]>(symbolArray.map((_, i) => ""))
+  const [ highlightedSymbols, setHighlightedSymbols ] = useState<string[]>(Array.from(symbolArray, (_)=> ""))
   const symbols = symbolArray.map((sym, i) => <Symbol  
     symbol={sym}
     handleMouseEnter={()=>handleMouseEnterSymbol(i)}
@@ -21,7 +20,7 @@ function App() {
  
   function handleMouseEnterSymbol(idx: number){
     let selectedWordIdx = isHoveringOverWord(idx)
-    let nextHighlightedSymbols = symbolArray.map((_, i) => "")
+    let nextHighlightedSymbols = Array.from(symbolArray, (_)=> "")
 
     if(selectedWordIdx){
       for(let i = selectedWordIdx; i<selectedWordIdx+wordLength; i++){
@@ -36,7 +35,7 @@ function App() {
   }
 
   function handleMouseLeaveSymbol(){
-    const nextHighlightedSymbols = symbolArray.map((_, i) => "")
+    const nextHighlightedSymbols = Array.from(symbolArray, (_)=> "")
     setHighlightedSymbols(nextHighlightedSymbols)
   }
 
