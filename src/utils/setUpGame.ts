@@ -5,11 +5,10 @@ const words= ["dangers", "sending", "central", "hunters", "resides", "believe", 
 const miscSymbols = [',','.','!','@','#','$','%','&','(',')','{','}','[',']','<','>','?','"',"'", '/', '|'];
 const symbolArrayLength = 384
 const numWords = 10
-export const wordLength = 7
-
-
 const chunkLength = Math.floor(symbolArrayLength / numWords);
-const selectedWords = shuffle(words).slice(0, numWords);
+
+export const wordLength = 7
+export const selectedWords = shuffle(words).slice(0, numWords);
 
 export const wordStartIndices = Array.from({ length: numWords }, (_, i) => i * chunkLength + getRandomInt(0, chunkLength - wordLength - 1))
 export let symbolArray = new Array(symbolArrayLength).fill(null);
@@ -30,4 +29,3 @@ for (let i = 0; i < symbolArrayLength; i++) {
         continue;
     symbolArray[i] = miscSymbols[getRandomInt(0, miscSymbols.length - 1)];
 }
-

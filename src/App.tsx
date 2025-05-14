@@ -4,7 +4,7 @@ import ColumnWrapper from './components/ColumnWrapper/ColumnWrapper'
 import Symbol from './components/Symbol/Symbol'
 import { highlightedSymbolClassName } from './components/Symbol/SymbolTypes'
 
-import { symbolArray, wordStartIndices, wordLength } from './utils/symbolArray'
+import { symbolArray, wordStartIndices, wordLength } from './utils/setUpGame'
 
 import './App.css'
 
