@@ -5,11 +5,14 @@ import Symbol from './components/Symbol/Symbol'
 import { highlightedSymbolClassName } from './components/Symbol/SymbolTypes'
 
 import { rawSymbols, wordStartIndices, wordLength, password, selectedWords } from './utils/setUpGame'
+import compareToPassword from './utils/compareToPassword'
 
 import './App.css'
 
 function App() {
   const [ highlightedSymbols, setHighlightedSymbols ] = useState<string[]>(Array.from(rawSymbols, (_)=> ""))
+  const [ tries, setTries ] = useState<number>(4)
+
   const symbols = rawSymbols.map((sym, i) => <Symbol  
     symbol={sym}
     handleMouseEnter={()=>handleMouseEnterSymbol(i)}
@@ -19,9 +22,23 @@ function App() {
   />)
 
   function handleClick(idx: number){
-    let word = isWord(idx)
-    if(word){
-      console.log(`Selected word: ${selectedWords[word]}, Password: ${password}`)
+    if(tries){
+      let word = isWord(idx)
+      if(word>-1){
+        checkGuess(word)
+      }
+    }
+  }
+
+  function checkGuess(word: number) {
+    const guess = selectedWords[word]
+    const numMatches = compareToPassword(password, guess)
+    console.log(`Guessed: ${guess}, likeness = ${numMatches}`)
+    if(numMatches == wordLength){
+      console.log("Game Won")
+    }
+    else{
+      setTries(tries-1)
     }
   }
 
@@ -29,7 +46,7 @@ function App() {
     let nextHighlightedSymbols = Array.from(rawSymbols, (_)=> "")
     
     let word = isWord(idx)
-    if(word>0){
+    if(word>-1){
       highlightWholeWord()
     }
     else{
@@ -63,6 +80,7 @@ function App() {
 return (
     <>
       <div>
+        <p>Tries: <span>{tries}</span></p>
         <ColumnWrapper symbols={symbols}/>
       </div>
     </>
