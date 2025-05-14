@@ -8,6 +8,9 @@ const numWords = 10
 const chunkLength = Math.floor(symbolArrayLength / numWords);
 
 export const wordLength = 7
+export const numCols = 2
+export const numLines = 12
+export const symbolsPerLine = symbolArrayLength/(numCols*numLines)
 export const selectedWords = shuffle(words).slice(0, numWords);
 
 export const wordStartIndices = Array.from({ length: numWords }, (_, i) => i * chunkLength + getRandomInt(0, chunkLength - wordLength - 1))

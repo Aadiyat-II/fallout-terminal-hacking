@@ -4,14 +4,16 @@ import ColumnWrapper from './components/ColumnWrapper/ColumnWrapper'
 import Symbol from './components/Symbol/Symbol'
 import { highlightedSymbolClassName } from './components/Symbol/SymbolTypes'
 
-import { rawSymbols, wordStartIndices, wordLength, password, selectedWords } from './utils/setUpGame'
+import { rawSymbols, wordStartIndices, wordLength, password, selectedWords, symbolsPerLine } from './utils/setUpGame'
 import compareToPassword from './utils/compareToPassword'
 
 import './App.css'
+import BracketPair from './utils/BracketPair'
 
 function App() {
   const [ highlightedSymbols, setHighlightedSymbols ] = useState<string[]>(Array.from(rawSymbols, (_)=> ""))
   const [ tries, setTries ] = useState<number>(4)
+  const [bracketBlacklist, setBracketBlacklist] = useState<number[]>([0])
 
   const symbols = rawSymbols.map((sym, i) => <Symbol  
     symbol={sym}
@@ -24,8 +26,12 @@ function App() {
   function handleClick(idx: number){
     if(tries){
       let word = isWord(idx)
+      let bracketPair = isBracketPair(idx);
       if(word>-1){
         checkGuess(word)
+      }
+      else if(bracketPair.valid){
+        setBracketBlacklist([...bracketBlacklist, bracketPair.start, bracketPair.end])
       }
     }
   }
@@ -46,8 +52,12 @@ function App() {
     let nextHighlightedSymbols = Array.from(rawSymbols, (_)=> "")
     
     let word = isWord(idx)
+    let bracketPair = isBracketPair(idx);
     if(word>-1){
       highlightWholeWord()
+    }
+    else if(bracketPair.valid){
+      highlightBracketPair()
     }
     else{
       highlightSymbol()
@@ -55,15 +65,21 @@ function App() {
 
     setHighlightedSymbols(nextHighlightedSymbols)
 
-    function highlightSymbol() {
-      nextHighlightedSymbols[idx] = highlightedSymbolClassName
-    }
-
     function highlightWholeWord() {
       const wordStart = wordStartIndices[word]
       for (let i = wordStart; i < wordStart + wordLength; i++) {
         nextHighlightedSymbols[i] = highlightedSymbolClassName
       }
+    }
+
+    function highlightBracketPair() {
+      for (let i = bracketPair.start; i <= bracketPair.end; i++) {
+        nextHighlightedSymbols[i] = highlightedSymbolClassName
+      }
+    }
+
+    function highlightSymbol() {
+      nextHighlightedSymbols[idx] = highlightedSymbolClassName
     }
   }
 
@@ -75,6 +91,56 @@ function App() {
   function isWord(i:number){
     // Compares the index of a symbol with the index of where each word starts (and ends) to see if the  symbol is part of a word
     return wordStartIndices.findIndex((element) => i >= element && i < element+wordLength)
+  }
+
+  function isBracketPair(i: number){
+    const openBrackets = ['<', '(', '{', '[']
+    const closeBrackets = ['>', ')', '}', ']']
+
+    const lineStartIdx =   Math.floor(i / symbolsPerLine)*symbolsPerLine
+    const lineEndIdx = lineStartIdx +  symbolsPerLine
+
+    const selectedChar = rawSymbols[i]
+    
+    let bracketStart = -1
+    let bracketEnd = -1
+
+    const openBracket = openBrackets.indexOf(selectedChar)
+    if(openBracket > -1 && !bracketBlacklist.some((elem)=> elem === i)){
+      bracketStart = i
+      findCorrespondingCloseBracket()
+    }
+
+    const closeBracket = closeBrackets.indexOf(selectedChar)
+    if(closeBracket > -1  && !bracketBlacklist.some((elem)=> elem === i)){
+      bracketEnd = i
+      findCorrespondingOpenBracket()
+    }
+
+    return new BracketPair(bracketStart, bracketEnd)
+    
+    function findCorrespondingCloseBracket() {
+      const correspondingCloseBracket = closeBrackets[openBracket]
+      for (let j = i; j < lineEndIdx; j++) {
+        if (isWord(j)>-1){
+          break
+        }
+        if (rawSymbols[j] == correspondingCloseBracket  && !bracketBlacklist.some((elem)=> elem === j)) {
+          bracketEnd = j
+        }
+      }
+    }
+
+    function findCorrespondingOpenBracket() {
+      const correspondingOpenBracket = openBrackets[closeBracket]
+      for (let j = i; j > lineStartIdx; j--) {
+        if (isWord(j) > -1)
+          break
+        if (rawSymbols[j] == correspondingOpenBracket  && !bracketBlacklist.some((elem)=> elem === j)) {
+          bracketStart = j
+        }
+      }
+    }
   }
 
 return (
