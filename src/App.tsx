@@ -97,7 +97,7 @@ function App() {
     
     let word = isWord(idx)
     let bracketPair = findCorrespondingBracketIfAny(idx);
-    
+
     if(word>-1){
       highlightWholeWord()
     }
@@ -166,16 +166,18 @@ function App() {
     
 
     function findChar(char: string, searchStart: number, searchEnd: number) {
+      let loc = -1
       for (let j = searchStart; j < searchEnd; j++) {
         if (isWord(j)>-1){ // If a word appears within a pair of brackets, it is not a valid bracket pair
+          loc = -1
           break
         }
         if (symbolArray[j] == char  && !bracketBlacklist.some((elem)=> elem === j)) {
-          return j
+          loc = j
         }
       }
 
-      return -1
+      return loc
     }
   }
 
