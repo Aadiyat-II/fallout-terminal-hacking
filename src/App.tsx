@@ -5,7 +5,7 @@ import Symbol from './components/Symbol/Symbol'
 import { highlightedSymbolClassName } from './components/Symbol/SymbolTypes'
 
 import { rawSymbols, wordStartIndices, wordLength, password, selectedWords, symbolsPerLine, totalTries, rewardTriesResetP } from './utils/setUpGame'
-import compareToPassword from './utils/compareToPassword'
+import compareStrings from './utils/compareStrings'
 
 import './App.css'
 import BracketPair from './utils/BracketPair'
@@ -37,57 +37,58 @@ function App() {
         setBracketBlacklist([...bracketBlacklist, bracketPair.start, bracketPair.end])
       }
     }
-  }
 
-  function checkGuess(word: number) {
-    const guess = selectedWords[word]
-    const numMatches = compareToPassword(password, guess)
-    console.log(`Guessed: ${guess}, likeness = ${numMatches}`)
-    if(numMatches == wordLength){
-      console.log("Game Won")
+
+    function checkGuess(word: number) {
+      const guess = selectedWords[word]
+      const numMatches = compareStrings(password, guess)
+      console.log(`Guessed: ${guess}, likeness = ${numMatches}`)
+      if(numMatches == wordLength){
+        console.log("Game Won")
+      }
+      else{
+        setTries(tries-1)
+      }
     }
-    else{
-      setTries(tries-1)
+  
+    function giveReward(){
+      if(Math.random() < rewardTriesResetP){
+        resetTries()
+      }
+      else{
+        removeDud()
+      }
     }
-  }
-
-  function giveReward(){
-    if(Math.random() < rewardTriesResetP){
-      resetTries()
+  
+    function resetTries(){
+      console.log("Reset Tries!")
+      setTries(totalTries)
     }
-    else{
-      removeDud()
+  
+    function removeDud(){
+      const duds = Array.from(selectedWords, (elem, i) => {
+        if(elem != password)
+          return i;
+      }).filter(i => i !=undefined)
+  
+      if(!duds.length)
+        return
+  
+      console.log("Remove dud!")
+      const wordToRemoveIdx = duds[getRandomInt(0, duds.length)]
+  
+      const nextSymbolArray = [...symbolArray]
+      const wordStart  = wordStartIndices[wordToRemoveIdx]
+  
+      for(let i = wordStart; i < wordStart + wordLength; i++){
+        nextSymbolArray[i] = '.'
+      }
+  
+      selectedWords.splice(wordToRemoveIdx, 1)
+      wordStartIndices.splice(wordToRemoveIdx, 1)
+  
+      setSymbolArray(nextSymbolArray)
     }
-  }
-
-  function resetTries(){
-    console.log("Reset Tries!")
-    setTries(totalTries)
-  }
-
-  function removeDud(){
-    const duds = Array.from(selectedWords, (elem, i) => {
-      if(elem != password)
-        return i;
-    }).filter(i => i !=undefined)
-
-    if(!duds.length)
-      return
-
-    console.log("Remove dud!")
-    const wordToRemoveIdx = duds[getRandomInt(0, duds.length)]
-
-    const nextSymbolArray = [...symbolArray]
-    const wordStart  = wordStartIndices[wordToRemoveIdx]
-
-    for(let i = wordStart; i < wordStart + wordLength; i++){
-      nextSymbolArray[i] = '.'
-    }
-
-    selectedWords.splice(wordToRemoveIdx, 1)
-    wordStartIndices.splice(wordToRemoveIdx, 1)
-
-    setSymbolArray(nextSymbolArray)
   }
 
   function handleMouseEnterSymbol(idx: number){

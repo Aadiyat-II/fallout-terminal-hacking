@@ -1,8 +1,8 @@
-export default function compareToPassword(password: string, guess: string){
+export default function compareStrings(target: string, guess: string){
     let numMatches = 0
-    const passwordChars = password.split('')
+    const targetChars = target.split('')
     const guessChars = guess.split('')
-    passwordChars.forEach(
+    targetChars.forEach(
         (char, i) => {
             if (guessChars[i] == char)
                 numMatches++;
