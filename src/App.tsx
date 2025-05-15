@@ -150,6 +150,7 @@ function App() {
     let bracketStart = -1
     let bracketEnd = -1
 
+ 
     const selectedOpenBracket = openBrackets.indexOf(selectedChar)
     if(selectedOpenBracket > -1 && !bracketBlacklist.some((elem)=> elem === selectedSymbolIdx)){
       bracketStart = selectedSymbolIdx
@@ -162,22 +163,31 @@ function App() {
       bracketStart = findChar(openBrackets[selectedCloseBracket], lineStartIdx, selectedSymbolIdx)
     }
 
+    if (hasWordBetween(bracketStart, bracketEnd)){
+      console.log(`Word between ${bracketStart}, ${bracketEnd}`)
+      return new BracketPair(-1, -1)
+    }
+    
     return new BracketPair(bracketStart, bracketEnd)
     
 
     function findChar(char: string, searchStart: number, searchEnd: number) {
       let loc = -1
-      for (let j = searchStart; j < searchEnd; j++) {
-        if (isWord(j)>-1){ // If a word appears within a pair of brackets, it is not a valid bracket pair
-          loc = -1
-          break
-        }
+      let valid = false
+ 
+      for(let j = searchStart; j < searchEnd; j++){
         if (symbolArray[j] === char  && !bracketBlacklist.some((elem)=> elem === j)) {
+          valid = true
           loc = j
-        }
+          break
+        } 
       }
-
+     
       return loc
+    }
+
+    function hasWordBetween(start: number, end: number){
+      return symbolArray.slice(start, end).some(e => e.match('[a-z]'))
     }
   }
 
