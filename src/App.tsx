@@ -187,7 +187,7 @@ function App() {
     }
 
     function hasWordBetween(start: number, end: number){
-      return symbolArray.slice(start, end).some(e => e.match('[a-z]'))
+      return symbolArray.slice(start, end).some(e => e.match('[a-zA-Z]'))
     }
   }
 
