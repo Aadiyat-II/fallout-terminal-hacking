@@ -28,7 +28,8 @@ function App() {
   function handleClick(idx: number){
     if(tries){
       let word = isWord(idx)
-      let bracketPair = isBracketPair(idx);
+      let bracketPair = findCorrespondingBracketIfAny(idx);
+
       if(word>-1){
         checkGuess(word)
       }
@@ -95,7 +96,8 @@ function App() {
     let nextHighlightedSymbols = Array.from(symbolArray, (_)=> "")
     
     let word = isWord(idx)
-    let bracketPair = isBracketPair(idx);
+    let bracketPair = findCorrespondingBracketIfAny(idx);
+    
     if(word>-1){
       highlightWholeWord()
     }
@@ -136,53 +138,44 @@ function App() {
     return wordStartIndices.findIndex((element) => i >= element && i < element+wordLength)
   }
 
-  function isBracketPair(i: number){
+  function findCorrespondingBracketIfAny(selectedSymbolIdx: number){
     const openBrackets = ['<', '(', '{', '[']
     const closeBrackets = ['>', ')', '}', ']']
 
-    const lineStartIdx =   Math.floor(i / symbolsPerLine)*symbolsPerLine
+    const lineStartIdx =   Math.floor(selectedSymbolIdx / symbolsPerLine)*symbolsPerLine
     const lineEndIdx = lineStartIdx +  symbolsPerLine
 
-    const selectedChar = symbolArray[i]
+    const selectedChar = symbolArray[selectedSymbolIdx]
     
     let bracketStart = -1
     let bracketEnd = -1
 
-    const openBracket = openBrackets.indexOf(selectedChar)
-    if(openBracket > -1 && !bracketBlacklist.some((elem)=> elem === i)){
-      bracketStart = i
-      findCorrespondingCloseBracket()
+    const selectedOpenBracket = openBrackets.indexOf(selectedChar)
+    if(selectedOpenBracket > -1 && !bracketBlacklist.some((elem)=> elem === selectedSymbolIdx)){
+      bracketStart = selectedSymbolIdx
+      bracketEnd = findChar(closeBrackets[selectedOpenBracket], selectedSymbolIdx, lineEndIdx)
     }
 
-    const closeBracket = closeBrackets.indexOf(selectedChar)
-    if(closeBracket > -1  && !bracketBlacklist.some((elem)=> elem === i)){
-      bracketEnd = i
-      findCorrespondingOpenBracket()
+    const selectedCloseBracket = closeBrackets.indexOf(selectedChar)
+    if(selectedCloseBracket > -1  && !bracketBlacklist.some((elem)=> elem === selectedSymbolIdx)){
+      bracketEnd = selectedSymbolIdx
+      bracketStart = findChar(openBrackets[selectedCloseBracket], lineStartIdx, selectedSymbolIdx)
     }
 
     return new BracketPair(bracketStart, bracketEnd)
     
-    function findCorrespondingCloseBracket() {
-      const correspondingCloseBracket = closeBrackets[openBracket]
-      for (let j = i; j < lineEndIdx; j++) {
-        if (isWord(j)>-1){
-          break
-        }
-        if (symbolArray[j] == correspondingCloseBracket  && !bracketBlacklist.some((elem)=> elem === j)) {
-          bracketEnd = j
-        }
-      }
-    }
 
-    function findCorrespondingOpenBracket() {
-      const correspondingOpenBracket = openBrackets[closeBracket]
-      for (let j = i; j > lineStartIdx; j--) {
-        if (isWord(j) > -1)
+    function findChar(char: string, searchStart: number, searchEnd: number) {
+      for (let j = searchStart; j < searchEnd; j++) {
+        if (isWord(j)>-1){ // If a word appears within a pair of brackets, it is not a valid bracket pair
           break
-        if (symbolArray[j] == correspondingOpenBracket  && !bracketBlacklist.some((elem)=> elem === j)) {
-          bracketStart = j
+        }
+        if (symbolArray[j] == char  && !bracketBlacklist.some((elem)=> elem === j)) {
+          return j
         }
       }
+
+      return -1
     }
   }
 
