@@ -44,7 +44,7 @@ function App() {
       const guess = selectedWords[word]
       const numMatches = compareStrings(password, guess)
       console.log(`Guessed: ${guess}, likeness = ${numMatches}`)
-      if(numMatches == wordLength){
+      if(numMatches === wordLength){
         console.log("Game Won")
       }
       else{
@@ -172,7 +172,7 @@ function App() {
           loc = -1
           break
         }
-        if (symbolArray[j] == char  && !bracketBlacklist.some((elem)=> elem === j)) {
+        if (symbolArray[j] === char  && !bracketBlacklist.some((elem)=> elem === j)) {
           loc = j
         }
       }

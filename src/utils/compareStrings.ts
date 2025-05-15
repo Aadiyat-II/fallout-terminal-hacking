@@ -4,7 +4,7 @@ export default function compareStrings(target: string, guess: string){
     const guessChars = guess.split('')
     targetChars.forEach(
         (char, i) => {
-            if (guessChars[i] == char)
+            if (guessChars[i] === char)
                 numMatches++;
         }
     )
