@@ -1,17 +1,17 @@
 import { useState } from 'react'
 
+import { rawSymbols, wordStartIndices, wordLength, password, selectedWords, symbolsPerLine, totalTries, triesResetProbablity } from './utils/setUpGame'
+import compareStrings from './utils/compareStrings'
+import BracketPair from './utils/BracketPair'
+import { getRandomInt } from './utils/getRandomInt'
+
 import ColumnWrapper from './components/ColumnWrapper/ColumnWrapper'
 import Symbol from './components/Character/Character'
 import { highlightedSymbolClassName } from './components/Character/CharacterTypes'
-
-import { rawSymbols, wordStartIndices, wordLength, password, selectedWords, symbolsPerLine, totalTries, triesResetProbablity } from './utils/setUpGame'
-import compareStrings from './utils/compareStrings'
-
-import './App.css'
-import BracketPair from './utils/BracketPair'
-import { getRandomInt } from './utils/getRandomInt'
 import RemainingAttemptsText from './components/RemainingAttemptsText/RemaningAttemptsText'
 import AttemptMarkers from './components/AttemptMarkers/AttemptMarkers'
+
+import './App.css'
 
 function App() {
   const [ highlightedSymbols, setHighlightedSymbols ] = useState<string[]>(Array.from(rawSymbols, (_)=> ""))

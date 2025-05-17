@@ -11,5 +11,5 @@ export default function Column({ colSymbols }: { colSymbols: ReactNode[]}){
             lineChars={colSymbols.slice(i*charsPerRow, i*charsPerRow+charsPerRow)}
         />)
 
-    return <div className="symbol-column">{lines}</div>
+    return <div className="character-column">{lines}</div>
 }

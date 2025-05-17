@@ -1,0 +1,7 @@
+.hex-address-column{
+    grid-column: auto;
+}
+
+.hex-address{
+    max-width: 6ch;
+}
