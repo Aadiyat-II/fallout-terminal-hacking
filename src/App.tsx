@@ -6,10 +6,9 @@ import BracketPair from './utils/BracketPair'
 import { getRandomInt } from './utils/getRandomInt'
 
 import ColumnWrapper from './components/ColumnWrapper/ColumnWrapper'
-import Symbol from './components/Character/Character'
+import RemainingAttempts from './components/RemainingAttempts/RemaningAttempts'
+import Character from './components/Character/Character'
 import { highlightedSymbolClassName } from './components/Character/CharacterTypes'
-import RemainingAttemptsText from './components/RemainingAttemptsText/RemaningAttemptsText'
-import AttemptMarkers from './components/AttemptMarkers/AttemptMarkers'
 
 import './App.css'
 
@@ -19,7 +18,7 @@ function App() {
   const [ bracketBlacklist, setBracketBlacklist] = useState<number[]>([0])
   const [ symbolArray, setSymbolArray ] = useState<string[]>(rawSymbols)
 
-  const symbols = symbolArray.map((sym, i) => <Symbol  
+  const symbols = symbolArray.map((sym, i) => <Character  
     symbol={sym}
     handleMouseEnter={()=>handleMouseEnterSymbol(i)}
     handleMouseLeave={()=>handleMouseLeaveSymbol()}
@@ -194,9 +193,8 @@ function App() {
 
 return (
     <>
+      <RemainingAttempts remainingAttempts={remainingAttempts}/>
       <div className='game-board'>
-        <RemainingAttemptsText/>
-        <AttemptMarkers remainingAttempts={remainingAttempts}/>
         <ColumnWrapper symbols={symbols}/>
       </div>
     </>
