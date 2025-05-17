@@ -11,7 +11,7 @@ export const rewardTriesResetP = 0.2
 export const totalTries = 4
 export const wordLength = 7
 export const numCols = 2
-export const numLines = 12
+export const numLines = 16
 export const symbolsPerLine = symbolArrayLength/(numCols*numLines)
 export const selectedWords = shuffle(words).slice(0, numWords);
 
