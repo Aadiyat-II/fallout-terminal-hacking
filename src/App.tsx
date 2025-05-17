@@ -10,10 +10,12 @@ import compareStrings from './utils/compareStrings'
 import './App.css'
 import BracketPair from './utils/BracketPair'
 import { getRandomInt } from './utils/getRandomInt'
+import RemainingAttemptsText from './components/RemainingAttemptsText/RemaningAttemptsText'
+import AttemptMarkers from './components/AttemptMarkers/AttemptMarkers'
 
 function App() {
   const [ highlightedSymbols, setHighlightedSymbols ] = useState<string[]>(Array.from(rawSymbols, (_)=> ""))
-  const [ tries, setTries ] = useState<number>(totalTries)
+  const [ remainingAttempts, setRemainingAttempts ] = useState<number>(totalTries)
   const [ bracketBlacklist, setBracketBlacklist] = useState<number[]>([0])
   const [ symbolArray, setSymbolArray ] = useState<string[]>(rawSymbols)
 
@@ -26,7 +28,7 @@ function App() {
   />)
 
   function handleClick(idx: number){
-    if(tries){
+    if(remainingAttempts){
       let word = isWord(idx)
       let bracketPair = findCorrespondingBracketIfAny(idx);
 
@@ -48,7 +50,7 @@ function App() {
         console.log("Game Won")
       }
       else{
-        setTries(tries-1)
+        setRemainingAttempts(remainingAttempts-1)
       }
     }
   
@@ -63,7 +65,7 @@ function App() {
   
     function resetTries(){
       console.log("Reset Tries!")
-      setTries(totalTries)
+      setRemainingAttempts(totalTries)
     }
   
     function removeDud(){
@@ -173,11 +175,9 @@ function App() {
 
     function findChar(char: string, searchStart: number, searchEnd: number) {
       let loc = -1
-      let valid = false
  
       for(let j = searchStart; j < searchEnd; j++){
         if (symbolArray[j] === char  && !bracketBlacklist.some((elem)=> elem === j)) {
-          valid = true
           loc = j
           break
         } 
@@ -191,10 +191,12 @@ function App() {
     }
   }
 
+
 return (
     <>
-      <div>
-        <p>Tries: <span>{tries}</span></p>
+      <div className='game-board'>
+        <RemainingAttemptsText/>
+        <AttemptMarkers remainingAttempts={remainingAttempts}/>
         <ColumnWrapper symbols={symbols}/>
       </div>
     </>
