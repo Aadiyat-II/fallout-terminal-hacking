@@ -7,7 +7,7 @@ const symbolArrayLength = 384
 const numWords = 10
 const chunkLength = Math.floor(symbolArrayLength / numWords);
 
-export const rewardTriesResetP = 0.2
+export const triesResetProbablity = 0.2
 export const totalTries = 4
 export const wordLength = 7
 export const numCols = 2

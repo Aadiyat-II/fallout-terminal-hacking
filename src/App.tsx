@@ -4,7 +4,7 @@ import ColumnWrapper from './components/ColumnWrapper/ColumnWrapper'
 import Symbol from './components/Symbol/Symbol'
 import { highlightedSymbolClassName } from './components/Symbol/SymbolTypes'
 
-import { rawSymbols, wordStartIndices, wordLength, password, selectedWords, symbolsPerLine, totalTries, rewardTriesResetP } from './utils/setUpGame'
+import { rawSymbols, wordStartIndices, wordLength, password, selectedWords, symbolsPerLine, totalTries, triesResetProbablity } from './utils/setUpGame'
 import compareStrings from './utils/compareStrings'
 
 import './App.css'
@@ -53,7 +53,7 @@ function App() {
     }
   
     function giveReward(){
-      if(Math.random() < rewardTriesResetP){
+      if(Math.random() < triesResetProbablity){
         resetTries()
       }
       else{
