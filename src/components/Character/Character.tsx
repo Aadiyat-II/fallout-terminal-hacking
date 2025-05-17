@@ -1,4 +1,4 @@
-import './Symbol.css'
+import './Character.css'
 import type { SymbolProps } from './CharacterTypes'
 
 export default function Symbol( { symbol, handleMouseEnter, handleMouseLeave, handleClick, className } : SymbolProps){
