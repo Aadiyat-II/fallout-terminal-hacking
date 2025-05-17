@@ -1,8 +1,8 @@
 import { useState } from 'react'
 
 import ColumnWrapper from './components/ColumnWrapper/ColumnWrapper'
-import Symbol from './components/Symbol/Symbol'
-import { highlightedSymbolClassName } from './components/Symbol/SymbolTypes'
+import Symbol from './components/Character/Character'
+import { highlightedSymbolClassName } from './components/Character/CharacterTypes'
 
 import { rawSymbols, wordStartIndices, wordLength, password, selectedWords, symbolsPerLine, totalTries, triesResetProbablity } from './utils/setUpGame'
 import compareStrings from './utils/compareStrings'

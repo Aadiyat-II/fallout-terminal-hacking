@@ -1,5 +1,5 @@
 import './Symbol.css'
-import type { SymbolProps } from './SymbolTypes'
+import type { SymbolProps } from './CharacterTypes'
 
 export default function Symbol( { symbol, handleMouseEnter, handleMouseLeave, handleClick, className } : SymbolProps){
     return <span 
