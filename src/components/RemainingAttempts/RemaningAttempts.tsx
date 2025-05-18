@@ -5,5 +5,5 @@ export default function RemainingAttempts({ remainingAttempts } : { remainingAtt
 }
 
 function AttemptMarker(){
-    return <span className="attempt-marker">_</span>
+    return <span className="attempt-marker">__</span>
 }

@@ -11,12 +11,14 @@ import Character from './components/Character/Character'
 import { highlightedSymbolClassName } from './components/Character/CharacterTypes'
 
 import './App.css'
+import GameLog from './components/GameLog/GameLog'
 
 function App() {
   const [ highlightedSymbols, setHighlightedSymbols ] = useState<string[]>(Array.from(rawSymbols, (_)=> ""))
   const [ remainingAttempts, setRemainingAttempts ] = useState<number>(totalTries)
   const [ bracketBlacklist, setBracketBlacklist] = useState<number[]>([0])
   const [ symbolArray, setSymbolArray ] = useState<string[]>(rawSymbols)
+  const [ logMessages, setLogMessages ] = useState<string[]>([])
 
   const symbols = symbolArray.map((sym, i) => <Character  
     symbol={sym}
@@ -35,22 +37,28 @@ function App() {
         checkGuess(word)
       }
       else if(bracketPair.valid){
+        logMessages.push(bracketPair.selection)
         giveReward()
         setBracketBlacklist([...bracketBlacklist, bracketPair.start, bracketPair.end])
       }
     }
 
-
     function checkGuess(word: number) {
       const guess = selectedWords[word]
       const numMatches = compareStrings(password, guess)
-      console.log(`Guessed: ${guess}, likeness = ${numMatches}`)
+      const nextLogMessages = [...logMessages]
+      nextLogMessages.push(guess)
+      nextLogMessages.push(`Likeness=${numMatches}`)
+
       if(numMatches === wordLength){
-        console.log("Game Won")
+        nextLogMessages.push("Access Granted!")
       }
       else{
         setRemainingAttempts(remainingAttempts-1)
+        nextLogMessages.push("Access Denied.")
       }
+
+      setLogMessages(nextLogMessages)
     }
   
     function giveReward(){
@@ -63,7 +71,7 @@ function App() {
     }
   
     function resetTries(){
-      console.log("Reset Tries!")
+      logMessages.push("Reset Tries!")
       setRemainingAttempts(totalTries)
     }
   
@@ -76,7 +84,7 @@ function App() {
       if(!duds.length)
         return
   
-      console.log("Remove dud!")
+      logMessages.push("Remove dud!")
       const wordToRemoveIdx = duds[getRandomInt(0, duds.length)]
   
       const nextSymbolArray = [...symbolArray]
@@ -165,11 +173,10 @@ function App() {
     }
 
     if (hasWordBetween(bracketStart, bracketEnd)){
-      console.log(`Word between ${bracketStart}, ${bracketEnd}`)
       return new BracketPair(-1, -1)
     }
     
-    return new BracketPair(bracketStart, bracketEnd)
+    return new BracketPair(bracketStart, bracketEnd, symbolArray.slice(bracketStart, bracketEnd + 1).join(''))
     
 
     function findChar(char: string, searchStart: number, searchEnd: number) {
@@ -196,6 +203,7 @@ return (
       <RemainingAttempts remainingAttempts={remainingAttempts}/>
       <div className='game-board'>
         <ColumnWrapper symbols={symbols}/>
+        <GameLog messages={logMessages}/>
       </div>
     </>
   )

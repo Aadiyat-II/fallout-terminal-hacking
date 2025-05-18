@@ -7,7 +7,6 @@
 
 .game-board{
   display: grid;
-  grid-template-columns: repeat(1fr);
   gap: 1ch;
   max-width: max-content;
 }
