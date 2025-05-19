@@ -13,4 +13,20 @@ body {
 
   background-color: black;
   color: limegreen;
+
+}
+
+p{
+  text-align: left;
+}
+
+button{
+    background-color: limegreen;
+    color: black;
+    border: none;
+}
+
+button:hover, button:focus{
+    background-color: black;
+    color: limegreen;
 }

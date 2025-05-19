@@ -1,0 +1,1 @@
+export type GameState = "PLAYING" | "ACCESS_GRANTED" | "LOCKED_OUT"

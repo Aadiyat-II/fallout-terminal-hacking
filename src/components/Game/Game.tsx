@@ -15,7 +15,7 @@ import GameLog from '../GameLog/GameLog'
 
 import './Game.css'
 
-export default function Game() {
+export default function Game({ gameWon, gameLost }: { gameWon : CallableFunction, gameLost: CallableFunction }) {
 	const [ highlightedSymbols, setHighlightedSymbols ] = useState<string[]>(Array.from({length:symbolArrayLength}, (_)=> ""))
 	const [ remainingAttempts, setRemainingAttempts ] = useState<number>(totalTries)
 	const [ bracketBlacklist, setBracketBlacklist] = useState<number[]>([0])
@@ -93,12 +93,16 @@ export default function Game() {
 			nextLogMessages.push(`Likeness=${numMatches}`)
 			
 			if(numMatches === wordLength){
-				nextLogMessages.push("Access Granted!")
+				nextLogMessages.push("Access Granted")
+				setTimeout(()=>gameWon(), 500);
 			}
 			else{
 				nextLogMessages.push("Access Denied.")
 				const nextRemainingAttempts = remainingAttempts-1
 				setRemainingAttempts(nextRemainingAttempts)
+				if(!nextRemainingAttempts){
+					gameLost();
+				}
 			}
 			
 			setLogMessages(nextLogMessages)
