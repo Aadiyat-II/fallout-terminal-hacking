@@ -1,11 +1,11 @@
 .game-log{
     display: flex;
-    align-items: flex-end;
+    flex-direction: column-reverse;
     min-width: 16ch;
 
     grid-column: 2;
 }
 
-.log-entry{
+.game-log > div{
     text-align: left;
 }

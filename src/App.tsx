@@ -19,6 +19,7 @@ function App() {
   const [ bracketBlacklist, setBracketBlacklist] = useState<number[]>([0])
   const [ symbolArray, setSymbolArray ] = useState<string[]>(rawSymbols)
   const [ logMessages, setLogMessages ] = useState<string[]>([])
+  const [ currentSelection, setCurrentSelection ] = useState<string>('|')
 
   const symbols = symbolArray.map((sym, i) => <Character  
     symbol={sym}
@@ -124,22 +125,26 @@ function App() {
       for (let i = wordStart; i < wordStart + wordLength; i++) {
         nextHighlightedSymbols[i] = highlightedSymbolClassName
       }
+      setCurrentSelection(symbolArray.slice(wordStart, wordStart+wordLength).join(''))
     }
 
     function highlightBracketPair() {
       for (let i = bracketPair.start; i <= bracketPair.end; i++) {
         nextHighlightedSymbols[i] = highlightedSymbolClassName
       }
+      setCurrentSelection(bracketPair.selection)
     }
 
     function highlightSymbol() {
       nextHighlightedSymbols[idx] = highlightedSymbolClassName
+      setCurrentSelection(symbolArray[idx])
     }
   }
 
   function handleMouseLeaveSymbol(){
     const nextHighlightedSymbols = Array.from(symbolArray, (_)=> "")
     setHighlightedSymbols(nextHighlightedSymbols)
+    setCurrentSelection('|')
   }
 
   function isWord(i:number){
@@ -203,7 +208,7 @@ return (
       <RemainingAttempts remainingAttempts={remainingAttempts}/>
       <div className='game-board'>
         <ColumnWrapper symbols={symbols}/>
-        <GameLog messages={logMessages}/>
+        <GameLog messages={logMessages} currentSelection={currentSelection}/>
       </div>
     </>
   )
