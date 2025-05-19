@@ -1,10 +1,11 @@
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
-import { rawSymbols, wordStartIndices, wordLength, password, selectedWords, symbolsPerLine, totalTries, triesResetProbablity } from '../../utils/setUpGame'
+import { wordLength, symbolsPerLine, totalTries, triesResetProbablity, candidateWords, numWords, chunkLength, symbolArrayLength, miscSymbols } from '../../utils/setUpGame'
+import  shuffle  from '../../utils/shuffle'
 import compareStrings from '../../utils/compareStrings'
 import BracketPair from '../../utils/BracketPair'
-import { getRandomInt } from '../../utils/getRandomInt'
+import getRandomInt from '../../utils/getRandomInt'
 
 import ColumnWrapper from '../ColumnWrapper/ColumnWrapper'
 import RemainingAttempts from '../RemainingAttempts/RemaningAttempts'
@@ -15,14 +16,56 @@ import GameLog from '../GameLog/GameLog'
 import './Game.css'
 
 export default function Game() {
-	const [ highlightedSymbols, setHighlightedSymbols ] = useState<string[]>(Array.from(rawSymbols, (_)=> ""))
+	const [ highlightedSymbols, setHighlightedSymbols ] = useState<string[]>(Array.from({length:symbolArrayLength}, (_)=> ""))
 	const [ remainingAttempts, setRemainingAttempts ] = useState<number>(totalTries)
 	const [ bracketBlacklist, setBracketBlacklist] = useState<number[]>([0])
-	const [ symbolArray, setSymbolArray ] = useState<string[]>(rawSymbols)
+	const [ characterArray, setCharacterArray ] = useState<string[]>([])
 	const [ logMessages, setLogMessages ] = useState<string[]>([])
 	const [ currentSelection, setCurrentSelection ] = useState<string>('|')
+	const [ selectedWords, setSelectedWords] = useState<string[]>([])
+	const [ wordStartIndices, setWordStartIndices ] = useState<number[]>([])
+	const [ password, setPassword ] = useState<string>('')
+	
+	useEffect(()=>{
+		setUpGame()
+	}, [])
 
-  
+	function setUpGame(){
+		const selectedWords = shuffle([...candidateWords]).slice(0, numWords)
+		const wordStartIndices = Array.from({ length: numWords }, (_, i) => i * chunkLength + getRandomInt(0, chunkLength - wordLength - 1))
+		const charArray = fillCharacterArray(selectedWords, wordStartIndices)
+		const password = selectedWords[getRandomInt(0, selectedWords.length)]
+
+		setSelectedWords(selectedWords)
+		setWordStartIndices(wordStartIndices)
+		setCharacterArray(charArray)
+		setPassword(password)
+	}
+
+	function fillCharacterArray(selectedWords: string[], wordStartIndices: number[]) {
+		const rawChars = Array.from({length: symbolArrayLength}, ()=>'')
+		// Enter each word starting from the corresponding start index
+		selectedWords.forEach((word: string, idx: number) => {
+			const startIdx = wordStartIndices[idx];
+			const chars = word.split('');
+	
+			for (let i = 0; i < wordLength; i++) {
+				rawChars[startIdx + i] = chars[i];
+			}
+		});
+	
+		// Fill the rest of the symbol array with random misc symbols
+		for (let i = 0; i < symbolArrayLength; i++) {
+			if (rawChars[i])
+				continue;
+			rawChars[i] = miscSymbols[getRandomInt(0, miscSymbols.length)];
+		}
+
+		return rawChars
+	}
+
+	
+
   	function handleClick(idx: number){
 		if(remainingAttempts){
 			let wordIdx = isWord(idx)
@@ -100,7 +143,7 @@ export default function Game() {
 			logMessages.push("Remove dud!")
 			const wordToRemoveIdx = duds[getRandomInt(0, duds.length)]
 		
-			const nextSymbolArray = [...symbolArray]
+			const nextSymbolArray = [...characterArray]
 			const wordStart  = wordStartIndices[wordToRemoveIdx]
 		
 			for(let i = wordStart; i < wordStart + wordLength; i++){
@@ -110,13 +153,13 @@ export default function Game() {
 			selectedWords.splice(wordToRemoveIdx, 1)
 			wordStartIndices.splice(wordToRemoveIdx, 1)
 		
-			setSymbolArray(nextSymbolArray)
+			setCharacterArray(nextSymbolArray)
 		}
 
 
 		function logSymbolSelection() {
 			const nextLogMessages = [...logMessages]
-			nextLogMessages.push(symbolArray[idx])
+			nextLogMessages.push(characterArray[idx])
 			nextLogMessages.push("ERROR")
 			setLogMessages(nextLogMessages)
 		}
@@ -124,7 +167,7 @@ export default function Game() {
 
 
 	function handleMouseEnterSymbol(idx: number){
-		let nextHighlightedSymbols = Array.from(symbolArray, (_)=> "")
+		let nextHighlightedSymbols = Array.from(characterArray, (_)=> "")
 		
 		let wordIdx = isWord(idx)
 		let bracketPair = findCorrespondingBracketIfAny(idx);
@@ -147,7 +190,7 @@ export default function Game() {
 			for (let i = wordStart; i < wordStart + wordLength; i++) {
 				nextHighlightedSymbols[i] = highlightedSymbolClassName
 			}
-			setCurrentSelection(symbolArray.slice(wordStart, wordStart+wordLength).join(''))
+			setCurrentSelection(characterArray.slice(wordStart, wordStart+wordLength).join(''))
 		}
 
 
@@ -161,13 +204,13 @@ export default function Game() {
 
 		function highlightSymbol() {
 			nextHighlightedSymbols[idx] = highlightedSymbolClassName
-			setCurrentSelection(symbolArray[idx])
+			setCurrentSelection(characterArray[idx])
 		}
 	}
 
 
 	function handleMouseLeaveSymbol(){
-		const nextHighlightedSymbols = Array.from(symbolArray, (_)=> "")
+		const nextHighlightedSymbols = Array.from(characterArray, (_)=> "")
 		setHighlightedSymbols(nextHighlightedSymbols)
 		setCurrentSelection('|')
   	}
@@ -186,7 +229,7 @@ export default function Game() {
 		const lineStartIdx =   Math.floor(selectedSymbolIdx / symbolsPerLine)*symbolsPerLine
 		const lineEndIdx = lineStartIdx +  symbolsPerLine
 
-		const selectedChar = symbolArray[selectedSymbolIdx]
+		const selectedChar = characterArray[selectedSymbolIdx]
 		
 		let bracketStart = -1
 		let bracketEnd = -1
@@ -207,14 +250,14 @@ export default function Game() {
 			return new BracketPair(-1, -1)
 		}
 		
-		return new BracketPair(bracketStart, bracketEnd, symbolArray.slice(bracketStart, bracketEnd + 1).join(''))
+		return new BracketPair(bracketStart, bracketEnd, characterArray.slice(bracketStart, bracketEnd + 1).join(''))
 		
 
 		function findChar(char: string, searchStart: number, searchEnd: number) {
 			let loc = -1
 		
 			for(let j = searchStart; j < searchEnd; j++){
-				if (symbolArray[j] === char  && !bracketBlacklist.some((elem)=> elem === j)) {
+				if (characterArray[j] === char  && !bracketBlacklist.some((elem)=> elem === j)) {
 					loc = j
 					break
 				} 
@@ -230,7 +273,7 @@ export default function Game() {
   	}
 
   
-  	const symbols = symbolArray.map((sym, i) => <Character  
+  	const symbols = characterArray.map((sym, i) => <Character  
 		symbol={sym}
 		handleMouseEnter={()=>handleMouseEnterSymbol(i)}
 		handleMouseLeave={()=>handleMouseLeaveSymbol()}
