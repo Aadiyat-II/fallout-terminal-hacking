@@ -1,0 +1,9 @@
+.remaining-attempts{
+    text-align: left;
+    margin-bottom: 1ch;
+}
+
+.attempt-marker{
+    background-color: limegreen;
+    margin-right: 1ch;
+}

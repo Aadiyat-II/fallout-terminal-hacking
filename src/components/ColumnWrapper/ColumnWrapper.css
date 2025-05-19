@@ -1,9 +1,17 @@
 .column-wrapper{
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(2, 1fr);
     gap: 1ch;
     
+    grid-column: 1;
+
     margin:0px;
     padding: 0px;
     max-width: max-content;
+}
+
+.column-pair{
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap:1ch;
 }

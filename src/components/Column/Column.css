@@ -1,3 +1,7 @@
-.symbol-column{
+.character-column{
     grid-column: auto;
+}
+
+p {
+    margin: 0px;
 }

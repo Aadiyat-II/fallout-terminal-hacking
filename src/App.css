@@ -3,5 +3,11 @@
   margin: 0 auto;
   padding: 2rem;
   text-align: center;
+  font-size: x-large;
 }
 
+.game-board{
+  display: grid;
+  gap: 1ch;
+  max-width: max-content;
+}

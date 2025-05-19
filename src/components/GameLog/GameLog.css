@@ -1,0 +1,11 @@
+.game-log{
+    display: flex;
+    flex-direction: column-reverse;
+    min-width: 16ch;
+
+    grid-column: 2;
+}
+
+.game-log > div{
+    text-align: left;
+}
