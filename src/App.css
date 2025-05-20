@@ -5,3 +5,20 @@
   text-align: center;
   font-size: x-large;
 }
+
+.app{
+  display:flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.app > div{
+  display: flex;
+  flex-direction: column;
+  justify-content: left;
+}
+
+.main-screen{
+  width: 56ch;
+  height: 20em;
+}

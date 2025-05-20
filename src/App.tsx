@@ -40,7 +40,9 @@ function App() {
     return (
         <>
             <div className="app">
-                {screen}
+                <div className="main-screen">
+                    {screen}
+                </div>
             </div>
         </>
     )
