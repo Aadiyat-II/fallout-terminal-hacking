@@ -1,7 +1,7 @@
 #root {
-  max-width: 1280px;
+  max-width: 100vw;
+  height: 100vh;
   margin: 0 auto;
-  padding: 2rem;
   text-align: center;
   font-size: x-large;
 }
@@ -10,9 +10,12 @@
   display:flex;
   justify-content: center;
   align-items: center;
+  height: 100%;
 }
 
 .app > div{
+  border: solid limegreen 1px;
+  padding: 2ch;
   display: flex;
   flex-direction: column;
   justify-content: left;
