@@ -87,48 +87,40 @@ export default function Game({ gameWon, gameLost }: { gameWon : CallableFunction
 		function checkGuess(word: number) {
 			const guess = selectedWords[word]
 			const numMatches = compareStrings(password, guess)
-			const nextLogMessages = [...logMessages]
-			nextLogMessages.push(guess)
+			
+			const newMessages= [guess]
 			
 			if(numMatches === wordLength){
-				nextLogMessages.push("Access Granted")
+				newMessages.push("Access Granted")
 				setTimeout(()=>gameWon(), 500);
 			}
 			else{
-				nextLogMessages.push("Access Denied.")
+				newMessages.push("Access Denied.")
 				const nextRemainingAttempts = remainingAttempts-1
 				setRemainingAttempts(nextRemainingAttempts)
 				if(!nextRemainingAttempts){
 					gameLost();
 				}
 			}
-			nextLogMessages.push(`Likeness=${numMatches}`)
+			newMessages.push(`Likeness=${numMatches}`)
 			
-			setLogMessages(nextLogMessages)
+			pushLogMessages(newMessages)
 		}
-		
 
-		function logBracketSelection(bracketPair: BracketPair) {
-			const nextLogMessages = [...logMessages]
-			nextLogMessages.push(bracketPair.selection)
-			setLogMessages(nextLogMessages)
-		}
-		
 
 		function giveReward(bracketPair: BracketPair){
-			const nextLogMessages = [...logMessages]
-			nextLogMessages.push(bracketPair.selection)
+			const newMessages = [bracketPair.selection]
 			
 			if(Math.random() < triesResetProbablity){
 				resetTries()
-				nextLogMessages.push("Reset Tries.")
+				newMessages.push("Reset Tries.")
 			}
 			else{
 				removeDud()
-				nextLogMessages.push("Remove dud.")
+				newMessages.push("Remove dud.")
 			}
 
-			setLogMessages(nextLogMessages)
+			pushLogMessages(newMessages)
 		}
 	
 
@@ -168,10 +160,10 @@ export default function Game({ gameWon, gameLost }: { gameWon : CallableFunction
 
 
 		function logSymbolSelection() {
-			const nextLogMessages = [...logMessages]
-			nextLogMessages.push(characterArray[idx])
-			nextLogMessages.push("ERROR")
-			setLogMessages(nextLogMessages)
+			pushLogMessages([
+				characterArray[idx],
+				"ERROR"
+			])
 		}
 	}
 
@@ -281,6 +273,12 @@ export default function Game({ gameWon, gameLost }: { gameWon : CallableFunction
 			return wordStartIndices.some((val)=>val >= start && val < end)
 		}
   	}
+
+	function pushLogMessages(messages: string[]){
+		const nextLogMessages = [...logMessages]
+		messages.forEach((message)=>nextLogMessages.push(message))
+		setLogMessages(nextLogMessages)
+	}
 
   
   	const symbols = characterArray.map((sym, i) => <Character  
