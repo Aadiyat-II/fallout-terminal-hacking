@@ -2,7 +2,7 @@ import type { ReactNode } from "react"
 import Line from "../Line/Line"
 import './Column.css'
 
-import { numLines } from "../../utils/setUpGame"
+import { numLines } from "../../utils/gameParameters"
 
 export default function Column({ colSymbols }: { colSymbols: ReactNode[]}){    
     const charsPerRow = colSymbols.length/numLines

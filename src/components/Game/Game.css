@@ -1,0 +1,5 @@
+.game-board{
+  display: grid;
+  gap: 1ch;
+  max-width: max-content;
+}

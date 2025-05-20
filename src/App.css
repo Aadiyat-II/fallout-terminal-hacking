@@ -1,13 +1,26 @@
 #root {
-  max-width: 1280px;
   margin: 0 auto;
-  padding: 2rem;
   text-align: center;
   font-size: x-large;
 }
 
-.game-board{
+.app{
+  width: 56ch;
+  height: 24em;
+  
+  border: solid limegreen 1px;
+  padding: 2ch; 
+
   display: grid;
-  gap: 1ch;
-  max-width: max-content;
+  grid-template-rows: auto minmax(0, 1fr);
 }
+
+
+.contents{
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1ch;
+}
+

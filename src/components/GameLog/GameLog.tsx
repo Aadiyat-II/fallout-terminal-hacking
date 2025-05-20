@@ -1,7 +1,7 @@
 import './GameLog.css'
 
 export default function GameLog( { messages, currentSelection } : { messages : string[], currentSelection: string}){
-    const maxMessagesShown = 10
+    const maxMessagesShown = 15
     const formattedMessages  = messages.slice(-maxMessagesShown).map((message, _) => <LogEntry message={message}/>)
     
     return  <div className="game-log">
