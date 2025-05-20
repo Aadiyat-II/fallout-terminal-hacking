@@ -2,7 +2,9 @@ import './TopSecretFiles.css'
 
 export default function TopSecretFiles({ reset } : { reset: CallableFunction }){
     return <>
-                <div className="top-secret-text">
+            <div className="top-secret-text">
+                <h3>Report 2241-02-10</h3>
+                <div >
                     <p>
                         As our tests suggested, the immediate vicinity of the vault is no longer dangerously irradiated, although the background radiation is still well above safe levels. Pockets of more intense radiation appear to still be common, and all surface water seems to be undrinkable. We will need to carry ample supplies of Rad-X with us on all future surveys. But hazard suits do not seem to be necessary for general exploration.
                     </p>
@@ -25,6 +27,7 @@ export default function TopSecretFiles({ reset } : { reset: CallableFunction }){
                         February 10, 2241
                     </p>
                 </div>
-                <button onClick={()=>reset()}>&gt; EXIT</button>
-            </>
+            </div>
+            <button onClick={()=>reset()}>&gt; EXIT</button>
+        </>
 }

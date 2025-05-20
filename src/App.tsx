@@ -39,16 +39,12 @@ function App() {
     }
 
     return (
-        <>
-            <div className="app">
-                <div className="main-screen">
-                    <div className="contents">
-                        <Header/>
-                        {screen}
-                    </div>
-                </div>
+        <div className="app">
+            <Header/>
+            <div className="contents">
+                {screen}
             </div>
-        </>
+        </div>
     )
 }
 
