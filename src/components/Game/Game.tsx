@@ -1,7 +1,7 @@
 
 import { useEffect, useState } from 'react'
 
-import { wordLength, symbolsPerLine, totalTries, triesResetProbablity, candidateWords, numWords, chunkLength, symbolArrayLength, miscSymbols } from '../../utils/setUpGame'
+import { wordLength, symbolsPerLine, totalTries, triesResetProbablity, candidateWords, numWords, chunkLength, symbolArrayLength, miscSymbols } from '../../utils/gameParameters'
 import  shuffle  from '../../utils/shuffle'
 import compareStrings from '../../utils/compareStrings'
 import BracketPair from '../../utils/BracketPair'

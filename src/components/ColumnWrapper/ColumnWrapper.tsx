@@ -1,6 +1,6 @@
 import { useEffect, useState, type ReactNode } from "react";
 
-import { numLines } from "../../utils/setUpGame";
+import { numLines } from "../../utils/gameParameters";
 
 import Column from "../Column/Column";
 import HexAddressColumn from "../HexAddressColumn/HexAddressColumn";
