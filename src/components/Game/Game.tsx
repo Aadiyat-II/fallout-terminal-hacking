@@ -75,8 +75,7 @@ export default function Game({ gameWon, gameLost }: { gameWon : CallableFunction
 				checkGuess(wordIdx)
 			}
 			else if(bracketPair.valid){
-				logBracketSelection(bracketPair)
-				giveReward()
+				giveReward(bracketPair)
 				setBracketBlacklist([...bracketBlacklist, bracketPair.start, bracketPair.end])
 			}
 			else{
@@ -90,7 +89,6 @@ export default function Game({ gameWon, gameLost }: { gameWon : CallableFunction
 			const numMatches = compareStrings(password, guess)
 			const nextLogMessages = [...logMessages]
 			nextLogMessages.push(guess)
-			nextLogMessages.push(`Likeness=${numMatches}`)
 			
 			if(numMatches === wordLength){
 				nextLogMessages.push("Access Granted")
@@ -104,6 +102,7 @@ export default function Game({ gameWon, gameLost }: { gameWon : CallableFunction
 					gameLost();
 				}
 			}
+			nextLogMessages.push(`Likeness=${numMatches}`)
 			
 			setLogMessages(nextLogMessages)
 		}
@@ -116,18 +115,26 @@ export default function Game({ gameWon, gameLost }: { gameWon : CallableFunction
 		}
 		
 
-		function giveReward(){
+		function giveReward(bracketPair: BracketPair){
+			const nextLogMessages = [...logMessages]
+			nextLogMessages.push(bracketPair.selection)
+			
 			if(Math.random() < triesResetProbablity){
 				resetTries()
+				nextLogMessages.push("Reset Tries.")
 			}
 			else{
 				removeDud()
+				nextLogMessages.push("Remove dud.")
 			}
+
+			setLogMessages(nextLogMessages)
 		}
 	
 
 		function resetTries(){
-			logMessages.push("Reset Tries!")
+			
+
 			setRemainingAttempts(totalTries)
 		}
 	
@@ -143,8 +150,7 @@ export default function Game({ gameWon, gameLost }: { gameWon : CallableFunction
 		
 			if(!duds.length)
 				return
-		
-			logMessages.push("Remove dud!")
+
 			const wordToRemoveIdx = duds[getRandomInt(0, duds.length)]
 		
 			const nextSymbolArray = [...characterArray]
