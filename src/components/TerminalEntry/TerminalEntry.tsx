@@ -1,6 +1,6 @@
-import './TopSecretFiles.css'
+import './TermianlEntry.css'
 
-export default function TopSecretFiles({ reset } : { reset: CallableFunction }){
+export default function TerminalEntry({ reset } : { reset: CallableFunction }){
     return <>
             <div className="top-secret-text">
                 <h3>Report 2241-02-10</h3>

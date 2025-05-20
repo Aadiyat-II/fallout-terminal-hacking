@@ -1,11 +1,11 @@
 import { useState, type ReactNode } from "react"
 
+import Header from "./components/Header/Header"
 import Game from "./components/Game/Game"
 import Lockout from "./components/Lockout/Lockout"
+import TerminalEntry from "./components/TerminalEntry/TerminalEntry"
 
 import  './App.css'
-import TopSecretFiles from "./components/TopSecretFiles/TopSecretFiles"
-import Header from "./components/Header/Header"
 
 type GameState = "PLAYING" | "ACCESS_GRANTED" | "LOCKED_OUT"
 
@@ -31,7 +31,7 @@ function App() {
             screen = <Game gameWon={gameWon} gameLost={gameLost}/>
             break
         case("ACCESS_GRANTED"):
-            screen = <TopSecretFiles reset={reset}/>
+            screen = <TerminalEntry reset={reset}/>
             break
         case("LOCKED_OUT"):
             screen = <Lockout reset={reset}></Lockout>
