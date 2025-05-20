@@ -23,5 +23,15 @@
 
 .main-screen{
   width: 56ch;
-  height: 20em;
+  height: 24em;
+}
+
+.contents{
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1ch;
+
+  height: 100%;
 }

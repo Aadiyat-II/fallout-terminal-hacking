@@ -292,12 +292,13 @@ export default function Game({ gameWon, gameLost }: { gameWon : CallableFunction
 	/>)
 
   	return (
-		<div className='game-screen'>
+		<>
+			<p>PASSWORD REQUIRED</p>
 			<RemainingAttempts remainingAttempts={remainingAttempts}/>
 			<div className='game-board'>
 				<ColumnWrapper symbols={symbols}/>
 				<GameLog messages={logMessages} currentSelection={currentSelection}/>
 			</div>
-		</div>
+		</>
 	)	
 }

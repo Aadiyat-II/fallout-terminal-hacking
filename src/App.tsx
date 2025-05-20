@@ -5,6 +5,7 @@ import Lockout from "./components/Lockout/Lockout"
 
 import  './App.css'
 import TopSecretFiles from "./components/TopSecretFiles/TopSecretFiles"
+import Header from "./components/Header/Header"
 
 type GameState = "PLAYING" | "ACCESS_GRANTED" | "LOCKED_OUT"
 
@@ -41,7 +42,10 @@ function App() {
         <>
             <div className="app">
                 <div className="main-screen">
-                    {screen}
+                    <div className="contents">
+                        <Header/>
+                        {screen}
+                    </div>
                 </div>
             </div>
         </>
