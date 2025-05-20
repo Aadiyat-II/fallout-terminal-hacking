@@ -91,11 +91,11 @@ export default function Game({ gameWon, gameLost }: { gameWon : CallableFunction
 			const newMessages= [guess]
 			
 			if(numMatches === wordLength){
-				newMessages.push("Access Granted")
+				newMessages.push("Entry Granted")
 				setTimeout(()=>gameWon(), 500);
 			}
 			else{
-				newMessages.push("Access Denied.")
+				newMessages.push("Entry Denied.")
 				const nextRemainingAttempts = remainingAttempts-1
 				setRemainingAttempts(nextRemainingAttempts)
 				if(!nextRemainingAttempts){
