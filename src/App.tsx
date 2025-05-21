@@ -28,7 +28,7 @@ function App() {
   
     switch(gameState){
         case("PLAYING"):
-            screen = <Game gameWon={gameWon} gameLost={gameLost}/>
+            screen = <Game />
             break
         case("ACCESS_GRANTED"):
             screen = <TerminalEntry reset={reset}/>
