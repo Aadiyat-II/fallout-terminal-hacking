@@ -21,7 +21,7 @@ export const initialState: GameState = {
 export function reducer(state: GameState, action: Action): GameState{
     switch(action.type){
         case("reset"): {
-            // Action start/restart a game
+            // Action to start/restart a game
             const selectedWords = shuffle([...candidateWords]).slice(0, numWords)
             const wordStartIndices = getWordStartIndices()
             
