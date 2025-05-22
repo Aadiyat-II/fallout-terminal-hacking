@@ -15,8 +15,7 @@ function App() {
         
     useEffect(()=>{
         dispatch({
-            type: "reset",
-            idx: -1
+            type: "reset"
         })
     }, []) 
     
@@ -24,8 +23,7 @@ function App() {
         if(state.gamePhase === "LOGGING_IN"){
             setTimeout(
                 ()=>dispatch({
-                        type: "login",
-                        idx: -1
+                        type: "login"
                     })
                 , 1000)
         }
@@ -33,8 +31,7 @@ function App() {
     
     function reset(){
         dispatch({
-            type: "reset",
-            idx: -1
+            type: "reset"
         })
     }
 
@@ -48,7 +45,6 @@ function App() {
     function handleMouseLeaveSymbol(){
         dispatch({
             type: "mouse_left",
-            idx: -1,
         })
     }
 

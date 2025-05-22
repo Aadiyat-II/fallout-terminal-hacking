@@ -1,8 +1,9 @@
-import { highlightedSymbolClassName } from "./components/Character/CharacterTypes"
-import BracketPair from "./utils/BracketPair"
 import { candidateWords, chunkLength, numWords, characterArrayLength, symbolsPerLine, totalTries, triesResetProbablity, wordLength, miscSymbols } from "./utils/gameParameters"
+import BracketPair from "./utils/BracketPair"
+import compareStrings from "./utils/compareStrings"
 import getRandomInt from "./utils/getRandomInt"
 import shuffle from "./utils/shuffle"
+import { highlightedSymbolClassName } from "./components/Character/CharacterTypes"
 
 export type GameState = {
     selectedWords: string[],
@@ -18,8 +19,21 @@ export type GameState = {
 }
 
 export type Action = {
-    type: "mouse_entered" | "mouse_left" | "clicked" | "reset" | "login",
+    type: "mouse_entered",
     idx: number
+} |
+{
+    type: "mouse_left",
+} | 
+{
+    type: "clicked",
+    idx: number
+} |
+{
+    type: "reset"
+} | 
+{ 
+    type: "login"
 }
 
 interface SelectionRange{
@@ -43,7 +57,7 @@ export const initialState: GameState = {
 export function reducer(state: GameState, action: Action): GameState{
     switch(action.type){
         case("mouse_entered"): {
-            const selectionRange = getSelectionRange(state, action);
+            const selectionRange = getSelectionRange(state, action.idx);
             return {
                 ...state,
                 highlightedSymbols: getHighlightedSymbols(selectionRange),
@@ -96,8 +110,6 @@ export function reducer(state: GameState, action: Action): GameState{
                 gamePhase: "ENTRY_GRANTED"
             }
         }
-        default:
-            throw Error('Unknown action: ' + action.type);
     }
 
 
@@ -114,13 +126,13 @@ export function reducer(state: GameState, action: Action): GameState{
 }
 
 
-function getSelectionRange(state: GameState, action:Action): SelectionRange{
+function getSelectionRange(state: GameState, idx: number): SelectionRange{
     /* Given an array of characters, and the idx of the character the mouse is hovering over,
     it returns the start and end indices of the whole selection. That is if the mouse is hovering over a character that
     belongs to a whole word, it will give the start and end indices of the whole word. If the mouse is hovering over a matching
     pair of brakcets, it will give the indices for a matching pair of brackets. */
    
-    const parentWordIdx = getParentWord(state.wordStartIndices, action.idx)
+    const parentWordIdx = getParentWord(state.wordStartIndices, idx)
     if(parentWordIdx > -1){
         return {
             start: state.wordStartIndices[parentWordIdx],
@@ -128,7 +140,7 @@ function getSelectionRange(state: GameState, action:Action): SelectionRange{
         }
     }
 
-    const bracketPair = findCorrespondingBracketIfAny(state, action.idx)
+    const bracketPair = findCorrespondingBracketIfAny(state, idx)
     if(bracketPair.valid){
         return {
             start: bracketPair.start,
@@ -137,15 +149,14 @@ function getSelectionRange(state: GameState, action:Action): SelectionRange{
     }
         
     return {
-        start: action.idx,
-        end: action.idx + 1,
+        start: idx,
+        end: idx + 1,
     }
 }
 
 
 function checkGuess(state: GameState, guess: string): GameState {
-    // const numMatches = compareStrings(state.password, guess)
-    const numMatches = wordLength
+    const numMatches = compareStrings(state.password, guess)
     let newMessages= [
         guess,
         `Likeness=${numMatches}`
