@@ -1,4 +1,4 @@
-export interface GameInterface{
+export interface GameProps{
     handleMouseEnterSymbol : CallableFunction,
     handleMouseLeaveSymbol: CallableFunction,
     handleClick: CallableFunction,

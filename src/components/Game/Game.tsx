@@ -2,7 +2,7 @@ import ColumnWrapper from '../ColumnWrapper/ColumnWrapper'
 import RemainingAttempts from '../RemainingAttempts/RemaningAttempts'
 import Character from '../Character/Character'
 import GameLog from '../GameLog/GameLog'
-import type { GameInterface } from './GameInterface'
+import type { GameProps } from './GameInterfaces'
 
 import './Game.css'
 
@@ -16,7 +16,7 @@ export default function Game(
 		remainingAttempts,
 		logMessages,
 		currentSelection
-	}: GameInterface
+	}: GameProps
 ) {
 
 

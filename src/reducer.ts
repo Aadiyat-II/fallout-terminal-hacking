@@ -1,45 +1,9 @@
 import { candidateWords, chunkLength, numWords, characterArrayLength, symbolsPerLine, totalTries, triesResetProbablity, wordLength, miscSymbols } from "./utils/gameParameters"
-import BracketPair from "./utils/BracketPair"
 import compareStrings from "./utils/compareStrings"
 import getRandomInt from "./utils/getRandomInt"
 import shuffle from "./utils/shuffle"
-import { highlightedSymbolClassName } from "./components/Character/CharacterTypes"
-
-export type GameState = {
-    selectedWords: string[],
-    wordStartIndices: number[],
-    password: string,
-    characterArray: string[],
-    remainingAttempts: number
-    usedBrackets: number[],
-    currentSelection: string,
-    highlightedSymbols: string[],
-    logMessages: string[],
-    gamePhase: "PLAYING" | "LOGGING_IN" | "ENTRY_GRANTED" | "LOCKED_OUT"
-}
-
-export type Action = {
-    type: "mouse_entered",
-    idx: number
-} |
-{
-    type: "mouse_left",
-} | 
-{
-    type: "clicked",
-    idx: number
-} |
-{
-    type: "reset"
-} | 
-{ 
-    type: "login"
-}
-
-interface SelectionRange{
-    start: number,
-    end: number
-}
+import { highlightedSymbolClassName } from "./components/Character/CharacterInterfaces"
+import { BracketPair, type Action, type GameState, type SelectionRange } from "./types"
 
 export const initialState: GameState = {
     selectedWords: [],
@@ -56,6 +20,20 @@ export const initialState: GameState = {
 
 export function reducer(state: GameState, action: Action): GameState{
     switch(action.type){
+        case("reset"): {
+            // Action start/restart a game
+            const selectedWords = shuffle([...candidateWords]).slice(0, numWords)
+            const wordStartIndices = getWordStartIndices()
+            
+            return{
+                ...initialState,
+                selectedWords: selectedWords,
+                wordStartIndices: wordStartIndices,
+                characterArray: fillCharacterArray(selectedWords, wordStartIndices),
+                password: selectedWords[getRandomInt(0, selectedWords.length)],
+            }
+        }
+
         case("mouse_entered"): {
             const selectionRange = getSelectionRange(state, action.idx);
             return {
@@ -64,6 +42,7 @@ export function reducer(state: GameState, action: Action): GameState{
                 currentSelection: state.characterArray.slice(selectionRange.start, selectionRange.end).join('')
             }
         }
+
         case("mouse_left"): {
             return {
                 ...state,
@@ -84,32 +63,21 @@ export function reducer(state: GameState, action: Action): GameState{
                 return giveReward(state, bracketPair);
             }
 
-
             return {
                 ...state,
                 logMessages: [...state.logMessages, state.characterArray[action.idx], "ERROR"]
             }
         }
 
-        case("reset"): {
-            const selectedWords = shuffle([...candidateWords]).slice(0, numWords)
-            const wordStartIndices = Array.from({ length: numWords }, (_, i) => i * chunkLength + getRandomInt(0, chunkLength - wordLength - 1))
-            
-            return{
-                ...initialState,
-                selectedWords: selectedWords,
-                wordStartIndices: wordStartIndices,
-                characterArray: fillCharacterArray(selectedWords, wordStartIndices),
-                password: selectedWords[getRandomInt(0, selectedWords.length)],
-                gamePhase: "PLAYING"
-            }
-        }
         case("login") : {
             return {
                 ...state,
                 gamePhase: "ENTRY_GRANTED"
             }
         }
+        
+        default:
+            throw Error("Unknown action.")
     }
 
 
@@ -123,6 +91,39 @@ export function reducer(state: GameState, action: Action): GameState{
             }
         })
     }
+}
+
+
+function getWordStartIndices() {
+    // The set of words the player must choose from appear somewhat evenly distributed, but with some jitter.
+    // This function generates such a distribution by first generating an even distribution of word positions
+    // and adding an uniformly random number to each
+    // The range of random numbers is chosen such that there is at least 1 character gap between adjacent words
+
+    return Array.from({ length: numWords }, (_, i) => i * chunkLength + getRandomInt(0, chunkLength - wordLength - 1))
+}
+
+function fillCharacterArray(selectedWords: string[], wordStartIndices: number[]): string[] {
+    /* Fill the character array with whole words at the given starting indices and fill all 
+    remaining spaces with random miscellaneous characters */
+    
+    const rawChars = Array.from({length: characterArrayLength}, ()=>'')
+    selectedWords.forEach((word: string, idx: number) => {
+        const startIdx = wordStartIndices[idx];
+        const chars = word.split('');
+
+        for (let i = 0; i < wordLength; i++) {
+            rawChars[startIdx + i] = chars[i];
+        }
+    });
+
+    for (let i = 0; i < characterArrayLength; i++) {
+        if (rawChars[i])
+            continue;
+        rawChars[i] = miscSymbols[getRandomInt(0, miscSymbols.length)];
+    }
+
+    return rawChars
 }
 
 
@@ -156,13 +157,18 @@ function getSelectionRange(state: GameState, idx: number): SelectionRange{
 
 
 function checkGuess(state: GameState, guess: string): GameState {
+    // Compares the guessed word with the password
+
+    let nextRemainingAttempts  = state.remainingAttempts
+    let nextPhase = state.gamePhase
+    
     const numMatches = compareStrings(state.password, guess)
+    
     let newMessages= [
         guess,
         `Likeness=${numMatches}`
     ]
-    let nextRemainingAttempts  = state.remainingAttempts - 1
-    let nextPhase = state.gamePhase
+    
     if(numMatches === wordLength){
         newMessages = [...newMessages, 
             "Entry Granted",
@@ -172,6 +178,7 @@ function checkGuess(state: GameState, guess: string): GameState {
 
     else{
         newMessages.push("Entry Denied.")
+        nextRemainingAttempts -= 1
         if(!nextRemainingAttempts){
             nextPhase = "LOCKED_OUT"
         }
@@ -187,7 +194,7 @@ function checkGuess(state: GameState, guess: string): GameState {
 
 
 function giveReward(state: GameState, bracketPair: BracketPair): GameState{
-    
+    /* Give a reward at random when the player clicks on a matching pair of brackets */
     if(Math.random() < triesResetProbablity){
         return resetTries(state, bracketPair)
     }
@@ -324,26 +331,4 @@ function findCorrespondingBracketIfAny(state: GameState, idx: number): BracketPa
     function hasWordBetween(start: number, end: number): boolean{
         return state.wordStartIndices.some((val)=>val >= start && val < end)
     }
-}
-
-function fillCharacterArray(selectedWords: string[], wordStartIndices: number[]): string[] {
-    const rawChars = Array.from({length: characterArrayLength}, ()=>'')
-    // Enter each word starting from the corresponding start index
-    selectedWords.forEach((word: string, idx: number) => {
-        const startIdx = wordStartIndices[idx];
-        const chars = word.split('');
-
-        for (let i = 0; i < wordLength; i++) {
-            rawChars[startIdx + i] = chars[i];
-        }
-    });
-
-    // Fill the rest of the symbol array with random misc symbols
-    for (let i = 0; i < characterArrayLength; i++) {
-        if (rawChars[i])
-            continue;
-        rawChars[i] = miscSymbols[getRandomInt(0, miscSymbols.length)];
-    }
-
-    return rawChars
 }
