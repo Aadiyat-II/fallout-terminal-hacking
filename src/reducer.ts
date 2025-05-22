@@ -1,6 +1,5 @@
 import { highlightedSymbolClassName } from "./components/Character/CharacterTypes"
 import BracketPair from "./utils/BracketPair"
-import compareStrings from "./utils/compareStrings"
 import { candidateWords, chunkLength, numWords, characterArrayLength, symbolsPerLine, totalTries, triesResetProbablity, wordLength, miscSymbols } from "./utils/gameParameters"
 import getRandomInt from "./utils/getRandomInt"
 import shuffle from "./utils/shuffle"
@@ -97,9 +96,10 @@ export function reducer(state: GameState, action: Action): GameState{
                 gamePhase: "ENTRY_GRANTED"
             }
         }
+        default:
+            throw Error('Unknown action: ' + action.type);
     }
-    
-    return state
+
 
     function getHighlightedSymbols(selectionRange: { start: number; end: number }): string[] {
         return  Array.from({ length: characterArrayLength}, (_, i) => {
