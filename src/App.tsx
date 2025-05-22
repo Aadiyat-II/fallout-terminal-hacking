@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from "react"
+import { useEffect, useReducer, type ReactNode } from "react"
 
 import Header from "./components/Header/Header"
 import Game from "./components/Game/Game"
@@ -6,37 +6,85 @@ import Lockout from "./components/Lockout/Lockout"
 import TerminalEntry from "./components/TerminalEntry/TerminalEntry"
 
 import  './App.css'
+import { initialState, reducer } from "./reducer"
+import LoginTransition from "./components/LoginTransition/LoginTransition"
 
-type GameState = "PLAYING" | "ACCESS_GRANTED" | "LOCKED_OUT"
 
 function App() {
-    const [ gameState, setGameState ] = useState<GameState>("PLAYING")
-  
-    function gameWon(){
-        setGameState("ACCESS_GRANTED")
-    }
-  
-    function gameLost(){
-        setGameState("LOCKED_OUT")
-    }
-  
+    const [ state, dispatch ] = useReducer(reducer, initialState);
+        
+    useEffect(()=>{
+        dispatch({
+            type: "reset",
+            idx: -1
+        })
+    }, []) 
+    
+    useEffect(()=>{
+        if(state.gamePhase === "LOGGING_IN"){
+            setTimeout(
+                ()=>dispatch({
+                        type: "login",
+                        idx: -1
+                    })
+                , 1000)
+        }
+    }, [state.gamePhase])
+    
     function reset(){
-        setGameState("PLAYING")
+        dispatch({
+            type: "reset",
+            idx: -1
+        })
+    }
+
+    function handleMouseEnterSymbol(idx: number){
+        dispatch({
+            type: "mouse_entered",
+            idx: idx
+        })
+    }
+    
+    function handleMouseLeaveSymbol(){
+        dispatch({
+            type: "mouse_left",
+            idx: -1,
+        })
+    }
+
+    function handleClick(idx: number){
+        dispatch({
+            type: "clicked",
+            idx: idx
+        })
     }
 
     let screen: ReactNode
   
-    switch(gameState){
+    switch(state.gamePhase){
         case("PLAYING"):
-            screen = <Game />
+            screen = <Game
+                    handleClick={handleClick}
+                    handleMouseEnterSymbol={handleMouseEnterSymbol}
+                    handleMouseLeaveSymbol={handleMouseLeaveSymbol}
+                    characterArray={state.characterArray}
+                    highlightedSymbols={state.highlightedSymbols}
+                    remainingAttempts={state.remainingAttempts}
+                    logMessages={state.logMessages}
+                    currentSelection={state.currentSelection}
+                />
             break
-        case("ACCESS_GRANTED"):
+        case("LOGGING_IN"):
+            screen = <LoginTransition/>
+            break
+        case("ENTRY_GRANTED"):
             screen = <TerminalEntry reset={reset}/>
             break
         case("LOCKED_OUT"):
             screen = <Lockout reset={reset}></Lockout>
             break
     }
+
 
     return (
         <div className="app">

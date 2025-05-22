@@ -5,7 +5,7 @@ import { candidateWords, chunkLength, numWords, characterArrayLength, symbolsPer
 import getRandomInt from "./utils/getRandomInt"
 import shuffle from "./utils/shuffle"
 
-type GameState = {
+export type GameState = {
     selectedWords: string[],
     wordStartIndices: number[],
     password: string,
@@ -14,11 +14,12 @@ type GameState = {
     usedBrackets: number[],
     currentSelection: string,
     highlightedSymbols: string[],
-    logMessages: string[]
+    logMessages: string[],
+    gamePhase: "PLAYING" | "LOGGING_IN" | "ENTRY_GRANTED" | "LOCKED_OUT"
 }
 
-type Action = {
-    type: "mouse_entered" | "mouse_left" | "clicked" | "reset",
+export type Action = {
+    type: "mouse_entered" | "mouse_left" | "clicked" | "reset" | "login",
     idx: number
 }
 
@@ -36,7 +37,8 @@ export const initialState: GameState = {
     usedBrackets: [],
     currentSelection: "|" ,
     highlightedSymbols: Array(numWords).fill(""),
-    logMessages: [] 
+    logMessages: [],
+    gamePhase: "PLAYING"
 }
 
 export function reducer(state: GameState, action: Action): GameState{
@@ -85,7 +87,14 @@ export function reducer(state: GameState, action: Action): GameState{
                 selectedWords: selectedWords,
                 wordStartIndices: wordStartIndices,
                 characterArray: fillCharacterArray(selectedWords, wordStartIndices),
-                password: selectedWords[getRandomInt(0, selectedWords.length)]
+                password: selectedWords[getRandomInt(0, selectedWords.length)],
+                gamePhase: "PLAYING"
+            }
+        }
+        case("login") : {
+            return {
+                ...state,
+                gamePhase: "ENTRY_GRANTED"
             }
         }
     }
@@ -135,23 +144,33 @@ function getSelectionRange(state: GameState, action:Action): SelectionRange{
 
 
 function checkGuess(state: GameState, guess: string): GameState {
-    const numMatches = compareStrings(state.password, guess)
-    const newMessages= [guess]
-    
+    // const numMatches = compareStrings(state.password, guess)
+    const numMatches = wordLength
+    let newMessages= [
+        guess,
+        `Likeness=${numMatches}`
+    ]
+    let nextRemainingAttempts  = state.remainingAttempts - 1
+    let nextPhase = state.gamePhase
     if(numMatches === wordLength){
-        newMessages.push("Entry Granted")
+        newMessages = [...newMessages, 
+            "Entry Granted",
+            "Loggin in..."]
+        nextPhase = "LOGGING_IN"
     }
 
     else{
         newMessages.push("Entry Denied.")
+        if(!nextRemainingAttempts){
+            nextPhase = "LOCKED_OUT"
+        }
     }
-
-    newMessages.push(`Likeness=${numMatches}`)
     
     return {
         ...state,
-        remainingAttempts: state.remainingAttempts - 1,
-        logMessages: [...state.logMessages, ...newMessages]
+        remainingAttempts: nextRemainingAttempts,
+        logMessages: [...state.logMessages, ...newMessages],
+        gamePhase: nextPhase
     }
 }
 
@@ -224,7 +243,8 @@ function giveReward(state: GameState, bracketPair: BracketPair): GameState{
             characterArray: nextCharacterArray,
             selectedWords: nextSelectedWords,
             wordStartIndices: nextWordStartIndices,
-            logMessages: [...state.logMessages, ...newMessages]
+            logMessages: [...state.logMessages, ...newMessages],
+            usedBrackets: [...state.usedBrackets, bracketPair.start, bracketPair.end]
         }
     }
 }
