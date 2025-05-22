@@ -1,4 +1,4 @@
-export interface SymbolProps{
+export interface CharacterProps{
     symbol: string, 
     handleMouseEnter: CallableFunction, 
     handleMouseLeave: CallableFunction, 
